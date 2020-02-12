@@ -18,35 +18,24 @@ def get_args():
         description='Favorite Things',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('positional',
+    parser.add_argument('favorite',
                         metavar='str',
-                        help='A positional argument')
+                        nargs='+',
+                        help='My favorite things')
 
-    parser.add_argument('-a',
-                        '--arg',
-                        help='A named string argument',
+    parser.add_argument('-s',
+                        '--sep',
                         metavar='str',
-                        type=str,
-                        default='')
+                        type = str,
+                        default = ', ',
+                        help='Change comma for sepparator')
 
-    parser.add_argument('-i',
-                        '--int',
-                        help='A named integer argument',
-                        metavar='int',
-                        type=int,
-                        default=0)
+    
+#    parser.add_argument('-s',
+#                        '--sep',
+#                        action='store_true',
+#                        help='Separate the items with a separator')
 
-    parser.add_argument('-f',
-                        '--file',
-                        help='A readable file',
-                        metavar='FILE',
-                        type=argparse.FileType('r'),
-                        default=None)
-
-    parser.add_argument('-o',
-                        '--on',
-                        help='A boolean flag',
-                        action='store_true')
 
     return parser.parse_args()
 
@@ -56,17 +45,33 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    str_arg = args.arg
-    int_arg = args.int
-    file_arg = args.file
-    flag_arg = args.on
-    pos_arg = args.positional
+    things = args.favorite
+    num = len(things)
+    separator = args.sep
+    
+    like = ''
+    
+    if num == 1:
+        like = things[0]
+        print(f'{like}')
+        print('This is one of my favorite things.')
+    else:
+        like = separator.join(things)
+        print(f'{like}')
+        print('These are a few of my favorite things.')
+    
+    
+    
+#    print(f'{things}')
+#    print('This is one of my favorite things')
 
-    print('str_arg = "{}"'.format(str_arg))
-    print('int_arg = "{}"'.format(int_arg))
-    print('file_arg = "{}"'.format(file_arg.name if file_arg else ''))
-    print('flag_arg = "{}"'.format(flag_arg))
-    print('positional = "{}"'.format(pos_arg))
+
+        
+    
+    
+    
+    
+    
 
 
 # --------------------------------------------------
