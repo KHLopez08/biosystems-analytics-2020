@@ -72,7 +72,7 @@ def main():
     for num_file, fh in enumerate(args.file, start=1):
         basename = os.path.basename(fh.name)
         out_file = os.path.join(args.outdir, basename)
-        print(f'{num_file:3}: {fh.name}')
+        print(f'{num_file:3}: {basename}')
         total_num_files += 1
 
         out_fh = open(out_file, 'wt')
@@ -84,8 +84,8 @@ def main():
         out_fh.close()
 
     word_sequence = 'sequence' if num_sequence == 1 else 'sequences'
-    word_file = 'file' if total_num_files ==1 else 'file'
-    print(f'Wrote {num_sequence} {word_sequence} from {total_num_files} {word_file} to directory "{args.outdir}"')
+    word_file = 'file' if total_num_files ==1 else 'files'
+    print(f'Wrote {num_sequence:,} {word_sequence} from {total_num_files} {word_file} to directory "{args.outdir}"')
 
 # --------------------------------------------------
 if __name__ == '__main__':
