@@ -50,36 +50,37 @@ def get_args():
 
 # --------------------------------------------------
 def main():
-    """Make a jazz noise here"""
+    """The Imperial March Sounds"""
 
     args = get_args()
     cluster_ids = set()
-    protein_ids = set()
+    #protein_ids = set()
     num_sequence = 0
+    count= 0
 
     for line in args.cdhit:
-        if line[0] == '>':
+        if line.startswith('>'):
             continue
         else:
             match = re.search(r'>(\d+)', line)
             id = match.group(1)
             cluster_ids.add(id)
     
-    total_proteins = len(cluster_ids)
+    #total_proteins = len(cluster_ids)
     #print(total_proteins)
 
     for rec in SeqIO.parse(args.proteins, 'fasta'):
         p_id = rec.id
         new_id = re.sub(r'\|.*', '', p_id)
-        protein_ids.add(new_id)
-        if protein_ids not in cluster_ids:
+        count += 1
+        if new_id not in cluster_ids:
             SeqIO.write(rec, args.outfile, 'fasta')
             num_sequence += 1
+
     
-    #print(len(protein_ids))
 
-
-    print(f'Wrote {num_sequence} of {total_proteins} unclustered proteins to "{args.outfile.name}"')
+    number_with_comma = "{:,}".format(count)
+    print(f'Wrote {num_sequence} of {number_with_comma} unclustered proteins to "{args.outfile.name}"')
 
 
 # --------------------------------------------------
