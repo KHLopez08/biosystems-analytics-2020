@@ -80,6 +80,8 @@ def main():
             if input_keyword.intersection(keywords):
                 keyword_count += 1
                 SeqIO.write(rec, args.outfile, 'fasta-2line')
+            else:
+                skip_count +=1
         
     
     print(f'Done, skipped {skip_count} and took {keyword_count}. See output in "{args.outfile.name}".')
