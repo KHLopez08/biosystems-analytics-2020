@@ -23,13 +23,13 @@ def get_args():
     
     parser.add_argument('file',
                         metavar='FILE',
+                        type=argparse.FileType('r'),
                         help='SwissProt file')
 
     parser.add_argument('-k',
                         '--keyword',
                         help='Keyword to take',
                         metavar='keyword',
-                        nargs = '+',
                         type=str,
                         default= None,
                         required= True)
@@ -38,21 +38,18 @@ def get_args():
                         '--skiptaxa',
                         help='Taxa to skip',
                         metavar='taxa',
-                        nargs = '+',
+                        nargs = '*',
                         type=str,
                         default= None)
     
     parser.add_argument('-o',
-                        '--output',
+                        '--outfile',
                         help='Output filename',
                         metavar='FILE',
                         type= argparse.FileType('wt'),
                         default='out.fa')
 
     args = parser.parse_args()
-    
-    if os.path.isfile(args.file):
-        args.file = open(args.file).read().rstrip()
         
     return args
 
@@ -61,27 +58,30 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
+    keyword = set()
+    taxa = set()
+    skip = set(map(str.lower, args.skiptaxa))
+    input_keyword = set(map(str.lower, args.keyword))
     skip_count = 0
     keyword_count = 0
-    # parser = SeqIO.parse(args.file, 'swiss')
-    # rec = list(parser)[0]
-    # print(rec)
+    
+
     for rec in SeqIO.parse(args.file, 'swiss'):
+        taxonomy = rec.annotations.get('taxonomy')
+        keywords = rec.annotations.get('keywords')
         taxa = set(map(str.lower, taxonomy))
         keyword = set(map(str.lower, keywords))
-        skip = set(map(str.lower, args.skiptaxa))
-        input_keyword = set(map(str.lower, args.keyword))
+
+        if skip.intersection(taxa):
+            skip_count += 1
+            continue
         
-        for rec.annotation in rec:
-            if skip.intersection(taxa) == True:
-                skip_count += 1
-                continue
-            
-            elif input_keyword.intersection(keyword) == True:
-                keyword_count += 1
-                SeqIO.write(rec, args.outfile, 'fasta')
+        if input_keyword.intersection(keyword):
+            SeqIO.write(rec, args.outfile, 'fasta')
+            keyword_count += 1
+        
     
-    print(f'Done, skipped {skip_count} and took {keyword_count}. See output in {args.output.name}.')
+    print(f'Done, skipped {skip_count} and took {keyword_count}. See output in "{args.outfile.name}".')
 
 
 # --------------------------------------------------
