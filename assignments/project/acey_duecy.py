@@ -47,9 +47,6 @@ def get_args():
                         default=None)
 
     args = parser.parse_args()
-
-    # if os.path.isfile(args.players):
-    #     args.players = open(args.players).read().rstrip()
     
     if len(args.players) > 4:
         parser.error(f' "{args.players}" are too much players, there must be 4 players or less.')
@@ -60,7 +57,7 @@ def get_args():
 def create_deck():
     face_of_card = []
     suit_of_card = ['Spades', 'Hearts', 'Diamonds', 'Clubs']
-    royal_cards = ['J', 'Q', 'K', 'A']
+    royal_cards = ['11', '12', '13', '14']
     deck_of_cards = []
 
     for i in range(2,11):
@@ -77,127 +74,98 @@ def create_deck():
 # --------------------------------------------------
 def shuffle_cards(deck_of_cards):
 
+    for k in range(0, 52):
+            i = random.randint(0, 51)
+            j = random.randint(0, 51)
+                      
+            temp = deck_of_cards[i]
+            deck_of_cards[i] = deck_of_cards[j]
+            deck_of_cards[j] = temp
+          
     random.shuffle(deck_of_cards)
-
-    random_card1 = deck_of_cards.pop(random.randint(0, len(deck_of_cards) -1))
-    random_card2 = deck_of_cards.pop(random.randint(0, len(deck_of_cards) -1))
-    random_card3 = deck_of_cards.pop(random.randint(0, len(deck_of_cards) -1))
-    new_random_card = deck_of_cards.pop(random.randint(0, len(deck_of_cards) -1))
-
-    return random_card1, random_card2, random_card3, new_random_card
-
+    return deck_of_cards
 
 
 # --------------------------------------------------
 def main():
     """Make a jazz noise here"""
     args = get_args()
+    random.seed(args.seed)
     participants = args.players
     list_of_player = {participants[i]: args.money for i in range(len(participants))}
-    # print(list_of_player)
-    value_j = '11'
-    value_q = '12'
-    value_k = '13'
-    value_a = '14'
-    high_card = ''
-    low_card = ''
+    bank = {'Bank': args.bank}
     deck = create_deck()
-    for m in range(52):
-        for n in range(len(participants)):
-            random_card1, random_card2, random_card3, new_random_card = shuffle_cards(deck)
-            article1 = 'an' if random_card1[0] in('A', '8') else 'a'
-            article2 = 'an' if random_card2[0] in('A', '8') else 'a'
-            article3 = 'an' if random_card3[0] in('A', '8') else 'a'
-            print(f'{participants[n]} your card is {article1} "{random_card1}" and the dealer\'s card is {article2} "{random_card2}".')
-            change_card = input('Would you like to change or keep your card? (Type change or keep): ')
-            if change_card.lower() == 'change':
-                random_card1 = new_random_card
-                print(f'Your new card is {article1} "{random_card1}".')
-            bet = input('Please, place your bet: ')
-            print(f'\nThe dealer places {article3} "{random_card3}" on the table!')
-            if random_card1[0] == 'A':
-                if value_a > random_card2[0]:
-                    high_card = random_card1
-                    low_card = random_card2
-                else:
-                    high_card = random_card2
-                    low_card = random_card1
-            elif random_card1[0] == 'J':
-                if value_j > random_card2[0]:
-                    high_card = random_card1
-                    low_card = random_card2
-                else:
-                    high_card = random_card2
-                    low_card = random_card1
-            elif random_card1[0] == 'Q':
-                if value_q > random_card2[0]:
-                    high_card = random_card1
-                    low_card = random_card2
-                else:
-                    high_card = random_card2
-                    low_card = random_card1
-            elif random_card1[0] == 'K':
-                if value_k > random_card2[0]:
-                    high_card = random_card1
-                    low_card = random_card2
-                else:
-                    high_card = random_card2
-                    low_card = random_card1
-            elif random_card1[0] > random_card2[0]:
-                high_card = random_card1
-                low_card = random_card2
-            else:
-                high_card = random_card2
-                low_card = random_card1
+    deck_shuffled = shuffle_cards(deck)
 
 
-            if random_card2[0] == 'A':
-                if value_a > random_card2[0]:
-                    high_card = random_card1
-                    low_card = random_card2
-                else:
-                    high_card = random_card2
-                    low_card = random_card1
-            elif random_card2[0] == 'J':
-                if value_j > random_card2[0]:
-                    high_card = random_card1
-                    low_card = random_card2
-                else:
-                    high_card = random_card2
-                    low_card = random_card1
-            elif random_card2[0] == 'Q':
-                if value_q > random_card2[0]:
-                    high_card = random_card1
-                    low_card = random_card2
-                else:
-                    high_card = random_card2
-                    low_card = random_card1
-            elif random_card2[0] == 'K':
-                if value_k > random_card2[0]:
-                    high_card = random_card1
-                    low_card = random_card2
-                else:
-                    high_card = random_card2
-                    low_card = random_card1
-            elif random_card2[0] > random_card1[0]:
-                high_card = random_card2
-                low_card = random_card1
-            else:
-                high_card = random_card1
-                low_card = random_card2
-        #Do comparison for playing card
+    for m in range(len(deck_shuffled)):
+        while int(bank.get('Bank')) > 0:
+            if len(deck_shuffled) < 10:
+                deck = create_deck()
+                deck_shuffled = shuffle_cards(deck)
 
-            # print(random_card1[0])
-            print(value_a > random_card2[0])
-            print(f'The first card is "{random_card1}" an the second card is "{random_card2}"\n')
-            print(f'The higher card is {high_card} and the lower card is {low_card}')
-            if random_card3[0] == high_card or random_card3[0] == low_card:
-                print('Both cards are equal, you win half pot\n')
-            elif random_card3[0] > low_card and random_card3[0] < high_card:
-                print('YOU WIN\n')
-            else:
-                print('Oooooooh, you lose\n')
+            for n in range(len(participants)):
 
+                if int(bank.get('Bank')) <= 0:
+                    break
+
+                if int(list_of_player[participants[n]]) <= 0:
+                    print(f'Oooooooooh no!!! {participants[n]} does not have money and is out of the game')
+                    continue
+                else:
+                    card1 = deck_shuffled.pop()
+                    card2 = deck_shuffled.pop()
+                    card3 = deck_shuffled.pop()
+                    rndm_card = deck_shuffled.pop()
+                    article1 = 'an' if int(card1[0:2]) in (8, 11) else 'a'
+                    article2 = 'an' if int(card2[0:2]) in (8, 11) else 'a'
+                    article3 = 'an' if int(card3[0:2]) in (8, 11) else 'a'
+                    print(bank)
+                    print(list_of_player, end='\n')
+                    print(
+                        f'{participants[n]} your card is {article1} "{card1}" and the dealer\'s card is {article2} "{card2}".')
+                    change_card = input('Would you like to change or keep your card? (Type change to "change"  or any key to "keep"): ')
+                    if change_card.lower() == 'change':
+                        card1 = rndm_card
+                        print(f'Your new card is {article1} "{card1}".')
+                    bet = int(input('Please, place your bet: '))
+                    bet = list_of_player.get(participants[n]) if bet > list_of_player.get(participants[n]) else bet
+                    print(f'\nThe dealer places {article3} "{card3}" on the table!')
+                    if int(card1[0:2]) == int(card3[0:2]) or int(card2[0:2]) == int(card3[0:2]):
+                        print('The third face-up card matches with one of the first two.\nYOU LOSE!!!')
+                        print(f'You lose {bet} chips in this round\n')
+                        new = list_of_player.get(participants[n]) - bet
+                        list_of_player[participants[n]] = new
+                    elif int(card1[0:2]) == int(card2[0:2]):
+                        print('The two face-up cards are the same.\nYOU WIN!!!')
+                        print('You win 1 chip in this round.\n')
+                        new = list_of_player.get(participants[n]) + 1
+                        list_of_player[participants[n]] = new
+                    elif int(card1[0:2]) == int(card2[0:2]) + 1 or int(card1[0:2]) == int(card2[0:2]) - 1:
+                        print('The two face-up cards are consecutive.\nYOU LOSE!!!')
+                        print(f'You lose {bet} chips in this round.\n')
+                        new = list_of_player.get(participants[n]) - bet
+                        list_of_player[participants[n]] = new
+                    else:
+                        if (int(card3[0:2]) > int(card1[0:2]) and int(card3[0:2]) < int(card2[0:2])) or \
+                                (int(card3[0:2]) < int(card1[0:2]) and int(card3[0:2]) > int(card2[0:2])):
+                            print(f'The third face-up card is between "{card1}" and "{card2}".\nYOU WIN!!!')
+                            print(f"You win {bet} chips in this round.\n")
+                            bank['Bank'] = bank.get('Bank') - bet
+                            new = list_of_player.get(participants[n]) + bet
+                            list_of_player[participants[n]] = new
+                        else:
+                            print(f'The third face-up card is not between "{card1}" and "{card2}".\nYOU LOSE!!!')
+                            print(f'You lose {bet} chips in this round.\n')
+                            bank['Bank'] = bank.get('Bank') + bet
+                            new = list_of_player.get(participants[n]) - bet
+                            list_of_player[participants[n]] = new
+        else:
+            print(f'GAME OVER! \nFinal Scores: {list_of_player}')
+            break
+
+        
+ 
 # --------------------------------------------------
 if __name__ == '__main__':
     main()
